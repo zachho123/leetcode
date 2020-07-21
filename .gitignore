@@ -1,0 +1,5 @@
+# directories to ignore
+.vscode
+
+# filetypes/files to ignore
+*.class
