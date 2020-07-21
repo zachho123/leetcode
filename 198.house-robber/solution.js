@@ -18,21 +18,31 @@ alerting the police.
  * @return {number} 
  */
 let rob = function(nums) {
-    let total = 0;
+    let max = 0;
 
     for (let i = 0; i < nums.length; i++) {
-        
-    }
+        if (i === 0 || i === 1) {
+            max = Math.max(max, nums[i]);
+        } else {
+            max = Math.max(nums[i-2] + nums[i], nums[i-1]);
+        }
 
-    return total;
+        nums[i] = max;
+    }
+    
+    return max;
 }
 
 let test = [
+    [1], // 1
+    [1, 2], // 2
+    [2, 1], // 2
     [2, 1, 2, 1, 2], // 6
     [1, 2, 1, 2, 1], // 4
-    [1, 2, 5, 1] // 6
-    [1, 2, 5, 7, 8, 15] // 14
-    [2, 1, 1, 2] // 4
+    [1, 2, 5, 1], // 6
+    [1, 2, 5, 7, 8], // 14
+    [2, 1, 1, 2], // 4
+    [2, 1, 1, 1, 2] // 5
 ];
 
 test.forEach(nums => {
