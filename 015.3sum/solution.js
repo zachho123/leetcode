@@ -35,6 +35,12 @@ let threeSum = function(nums) {
     return sets;
 };
 
+/**
+ * Finds all pairs in nums which sum to target
+ * @param {number[]} nums 
+ * @param {number} target
+ * @return {number[][]}
+ */
 let twoSum = function(nums, target) {
     let seen = [];
     let sets = [];
@@ -50,6 +56,12 @@ let twoSum = function(nums, target) {
     return sets;
 };
 
+/**
+ * Determines if the toAdd triplet is unique amongst existing triplets in set
+ * @param {number[][]} set 
+ * @param {number[]} toAdd
+ * @return {boolean}
+ */
 let isUnique = function(set, toAdd) {
     for (let i = 0; i < set.length; i++) {
         let arr = set[i];
