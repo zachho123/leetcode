@@ -21,7 +21,7 @@
  * @return {string[]} All possible letter combinations the numbers could 
  *     represent.
  */
-let letterCombinations = function(digits) {
+function letterCombinations(digits) {
     // Digit to letter mappings
     const letterMappings = {
         '2': 'abc'.split(''),
@@ -59,15 +59,8 @@ let letterCombinations = function(digits) {
  * Runs all test cases for letterCombinations() and prints the results to 
  * console.
  */
-let runTests = () => {
-    let testCases = [
-        "2",
-        "23",
-        "27",
-        "78",
-        "234",
-        "2345"
-    ];
+function runTests() {
+    let testCases = [ "2", "23", "27", "78", "234", "2345" ];
 
     testCases.forEach(testCase => {
         console.log(`Running test for input: "${testCase}"`);
