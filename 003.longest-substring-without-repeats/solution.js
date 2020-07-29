@@ -4,28 +4,63 @@
  * @return {number} The length of longest substring without repeat characters.
  */
 function lengthOfLongestSubstring(s) {
+    if (!s) {
+        return 0;
+    } else if (s.length === 1) {
+        return 1;
+    }
 
+    let maxLength = 0;
+    let currLength = 0;
+    let front = 0;
+    let back = 0;
+    let map = new Map(); // Keeps track of seen chars and their positions
+
+    while (back < s.length) {
+        let currChar = s.charAt(back);
+        if (map.has(currChar) && map.get(currChar) >= front) {
+            currLength = back - front;
+            maxLength = Math.max(currLength, maxLength);
+            front = map.get(currChar) + 1;
+            map.set(currChar, back);
+        }
+        map.set(currChar, back);
+        back++;
+    }
+    currLength = back - front;
+    maxLength = Math.max(currLength, maxLength);
+
+    return maxLength;
 }
 
 /**
- * Runs a specified number of test cases.
+ * Runs "n" testcases or all if "n" not specified.
  * @param {number} n - The number of test cases to run.
  */
 function runTests(n) {
-    let tests = [
+    const tests = [
+        { testcase: null, expected: 0 },
+        { testcase: '', expected: 0 },
+        { testcase: 'a', expected: 1 },
+        { testcase: 'aa', expected: 1 },
+        { testcase: 'ab', expected: 2 },
         { testcase: 'abcabcbb', expected: 3 },
         { testcase: 'bbbbb', expected: 1 },
-        { testcase: 'pwwkew', expected: 3 }
+        { testcase: 'pwwkew', expected: 3 },
+        { testcase: 'abcdbalkm', expected: 7 }
     ];
 
-    for (let i = 0; i <= tests.length && i < n; i++) {
+    if (!n) { n = tests.length; }
+
+    for (let i = 0; i < tests.length && i <= n; i++) {
         let testcase = tests[i].testcase;
         let expected = tests[i].expected;
-        let result = lengthOfLongestSubstring(testcase) === expected 
-            ? 'Passed' : 'Failed';
+        let result = lengthOfLongestSubstring(testcase);
+        let isPassed = result === expected ? 'Passed' : 'Failed';
 
-        console.log(`Running test case ${i+1}: ${testcase} - ${result}`);
+        console.log(`Running test case ${i+1}: ${testcase} - ${isPassed}`);
+        console.log(`\texpected: ${expected}, got: ${result}\n`);
     }
 }
 
-runTests(1);
+runTests();
