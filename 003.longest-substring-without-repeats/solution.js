@@ -11,7 +11,6 @@ function lengthOfLongestSubstring(s) {
     }
 
     let maxLength = 0;
-    let currLength = 0;
     let front = 0;
     let back = 0;
     let map = new Map(); // Keeps track of seen chars and their positions
@@ -19,16 +18,14 @@ function lengthOfLongestSubstring(s) {
     while (back < s.length) {
         let currChar = s.charAt(back);
         if (map.has(currChar) && map.get(currChar) >= front) {
-            currLength = back - front;
-            maxLength = Math.max(currLength, maxLength);
+            maxLength = Math.max(back - front, maxLength);
             front = map.get(currChar) + 1;
             map.set(currChar, back);
         }
         map.set(currChar, back);
         back++;
     }
-    currLength = back - front;
-    maxLength = Math.max(currLength, maxLength);
+    maxLength = Math.max(back - front, maxLength);
 
     return maxLength;
 }
