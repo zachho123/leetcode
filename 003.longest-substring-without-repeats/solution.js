@@ -13,18 +13,9 @@ function lengthOfLongestSubstring(s) {
  */
 function runTests(n) {
     let tests = [
-        {
-            testcase: 'abcabcbb',
-            expected: 3
-        },
-        {
-            testcase: 'bbbbb',
-            expected: 1
-        },
-        {
-            testcase: 'pwwkew',
-            expected: 3
-        }
+        { testcase: 'abcabcbb', expected: 3 },
+        { testcase: 'bbbbb', expected: 1 },
+        { testcase: 'pwwkew', expected: 3 }
     ];
 
     for (let i = 0; i <= tests.length && i < n; i++) {
