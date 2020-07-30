@@ -13,10 +13,8 @@ function uniqueLetterString(s) {
 
     // Generate every substring, and call countUniqueChars() on them
     for (let i = 0; i < s.length; i++) {
-        for (let j = i + 1; j < s.length; j++) {
-            console.log(`current string: ${s.substring(i, j)}`);
+        for (let j = i + 1; j <= s.length; j++) {
             sum += countUniqueChars(s.substring(i, j));
-            console.log(`sum is now: ${sum}`);
         }
     }
 
@@ -78,7 +76,8 @@ function countUniqueChars(s) {
     const tests = [
         { s: 'A', expected: 1 },
         { s: 'AB', expected: 4 },
-        { s: 'ABC', expected: 10 }
+        { s: 'ABC', expected: 10 },
+        { s: 'AAAB', expected: 8 }
     ];
 
     console.log('RUNNING uniqueLetterString() TESTS...');
