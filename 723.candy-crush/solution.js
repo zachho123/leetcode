@@ -31,8 +31,11 @@ function stabilize(board) {
     let toDestroy = searchForClusters(board, CLUSTER_SIZE);
     let clustersToDestroy = toDestroy.size > 0;
 
+    console.log(toDestroy);
+
     while (clustersToDestroy) {
         crush(board, toDestroy);
+        printBoard(board);
         collapse(board);
         toDestroy = searchForClusters(board, CLUSTER_SIZE);
         clustersToDestroy = toDestroy.size > 0;
@@ -113,7 +116,10 @@ function checkCol(board, row, col, candyNum) {
 }
 
 function checkCluster(cluster, toDestroy, CLUSTER_SIZE) {
+    console.log('checking cluster...');
+    console.log(cluster.size);
     if (cluster.size >= CLUSTER_SIZE) {
+        console.log('adding to map');
         cluster.cells.forEach(cell => {
             const row = cell.row;
             const col = cell.col;
