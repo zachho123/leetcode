@@ -31,11 +31,8 @@ function stabilize(board) {
     let toDestroy = searchForClusters(board, CLUSTER_SIZE);
     let clustersToDestroy = toDestroy.size > 0;
 
-    console.log(toDestroy);
-
     while (clustersToDestroy) {
         crush(board, toDestroy);
-        printBoard(board);
         collapse(board);
         toDestroy = searchForClusters(board, CLUSTER_SIZE);
         clustersToDestroy = toDestroy.size > 0;
@@ -63,14 +60,14 @@ function searchForClusters(board, CLUSTER_SIZE) {
 
             // Only check for valid candy
             if (candyNum > 0) {
-                // Only check row if CLUSTER_SIZE cluster is possible
-                if (col < numCols - CLUSTER_SIZE - 1) {
+                // Only check row if large enough cluster is possible
+                if (col <= numCols - CLUSTER_SIZE) {
                     const rowCluster = checkRow(board, row, col, candyNum);
                     checkCluster(rowCluster, toDestroy, CLUSTER_SIZE);
                 }
 
-                // Only check col if 3+ cluster is possible
-                if (row < numRows - CLUSTER_SIZE - 1) {
+                // Only check col if large enough cluster is possible
+                if (row <= numRows - CLUSTER_SIZE) {
                     const colCluster = checkCol(board, row, col, candyNum);
                     checkCluster(colCluster, toDestroy, CLUSTER_SIZE);
                 }
@@ -116,10 +113,7 @@ function checkCol(board, row, col, candyNum) {
 }
 
 function checkCluster(cluster, toDestroy, CLUSTER_SIZE) {
-    console.log('checking cluster...');
-    console.log(cluster.size);
     if (cluster.size >= CLUSTER_SIZE) {
-        console.log('adding to map');
         cluster.cells.forEach(cell => {
             const row = cell.row;
             const col = cell.col;
@@ -143,9 +137,9 @@ function crush(board, toDestroy) {
 }
 
 function collapse(board) {
-    for (let col = 0; col < board[0].length; col++) {
-        let collapseCol = findZeros(board, col);
-    }
+    // for (let col = 0; col < board[0].length; col++) {
+    //     let collapseCol = findZeros(board, col);
+    // }
 }
 
 function findZeroes(board, col) {
