@@ -29,13 +29,11 @@ function stabilize(board) {
 
     // Initial pass to see if there are candy clusters to crush
     let toDestroy = searchForClusters(board, CLUSTER_SIZE);
-    let clustersToDestroy = toDestroy.size > 0;
 
-    while (clustersToDestroy) {
+    while (toDestroy.size > 0) {
         crush(board, toDestroy);
-        collapse(board);
+        collapse(board, toDestroy);
         toDestroy = searchForClusters(board, CLUSTER_SIZE);
-        clustersToDestroy = toDestroy.size > 0;
     }
 
     return board;
@@ -82,7 +80,7 @@ function searchForClusters(board, CLUSTER_SIZE) {
  * Checks the current row for a candy cluster.
  * @param {number[][]} board - The game board.
  * @param {number} row - The current cell row.
- * @param {number} col - The current cell col.
+ * @param {number} col - The current cell column.
  * @param {number} candyNum - The id of the current candy type.
  * @returns {Object} Returns a candy cluster with size and list of cells.
  */
@@ -99,6 +97,14 @@ function checkRow(board, row, col, candyNum) {
     return {size, cells};
 }
 
+/**
+ * Checks the current column for a candy cluster.
+ * @param {number[][]} board - The game board.
+ * @param {number} row - The current cell row.
+ * @param {number} col - The current cell column.
+ * @param {number} candyNum - The id of the current candy type.
+ * @returns {Object} Returns a candy cluster with size and list of cells.
+ */
 function checkCol(board, row, col, candyNum) {
     let size = 0;
     const cells = [];
@@ -112,40 +118,86 @@ function checkCol(board, row, col, candyNum) {
     return {size, cells};
 }
 
+/**
+ * Marks cluster cells to be crushed if cluster size is big enough.
+ * @param {Object} cluster - The current candy cluster.
+ * @param {Map} toDestroy - Map of cells to crush.
+ * @param {number} CLUSTER_SIZE - Min size of candy cluster to crush.
+ */
 function checkCluster(cluster, toDestroy, CLUSTER_SIZE) {
     if (cluster.size >= CLUSTER_SIZE) {
         cluster.cells.forEach(cell => {
             const row = cell.row;
             const col = cell.col;
 
-            if (toDestroy.has(row)) {
-                toDestroy.get(row).add(col);
+            if (toDestroy.has(col)) {
+                toDestroy.get(col).add(row);
             } else {
-                toDestroy.set(row, new Set().add(col));
+                toDestroy.set(col, new Set().add(row));
             }
         });
     }
 }
 
+/**
+ * Crushes candies by replacing their cells with 0.
+ * @param {number[][]} board - The game board.
+ * @param {Map} toDestroy - Map of cells to crush.
+ */
 function crush(board, toDestroy) {
     toDestroy.forEach((value, key) => {
-        const row = key;
-        value.forEach(col => {
+        const col = key;
+        value.forEach(row => {
             board[row][col] = 0;
         });
     });
 }
 
-function collapse(board) {
-    // for (let col = 0; col < board[0].length; col++) {
-    //     let collapseCol = findZeros(board, col);
-    // }
+/**
+ * Shifts columns down after crushing.
+ * @param {number[][]} board - The game board.
+ * @param {Map} toDestroy - Map of cells to crush.
+ */
+function collapse(board, toDestroy) {
+    const numRows = board.length;
+    const numCols = board[0].length;
+
+    // We only need to collapse the columns which had clusters crushed
+    for (let col = 0; col < numCols; col++) {
+        if (toDestroy.has(col)) {
+            const nonZeroVals = getNonZeroVals(board, col);
+            const zeroBoundary = numRows - nonZeroVals.length;
+
+            // Backfill 0's from top and add "fallen" nonzero values
+            let nonZeroIndex = 0;
+            for (let row = 0; row < numRows; row++) {
+                if (row < zeroBoundary) {
+                    board[row][col] = 0;
+                } else {
+                    board[row][col] = nonZeroVals[nonZeroIndex];
+                    nonZeroIndex++;
+                }
+            }
+        }
+    }
 }
 
-function findZeroes(board, col) {
-    for (row = board.length - 1; row >= 0; row++) {
-        
+/**
+ * Gets the nonzero values from a given column in the board.
+ * @param {number[][]} board - The game board.
+ * @param {number} col - The column to pull values from.
+ * @returns Array of nonzero values from input column.
+ */
+function getNonZeroVals(board, col) {
+    let nonZero = [];
+
+    for (row = 0; row < board.length; row++) {
+        if (board[row][col] !== 0) {
+            nonZero.push(board[row][col]);
+        }
     }
+
+    return nonZero;
 }
 
 function printBoard(board) {
@@ -174,6 +226,7 @@ function printBoard(board) {
             output: [
                 [0,0,0,0,0],
                 [0,0,0,0,0],
+                [0,0,0,0,0],
                 [110,0,0,0,114],
                 [210,0,0,0,214],
                 [310,0,0,113,314],
@@ -187,15 +240,18 @@ function printBoard(board) {
 
     tests.forEach( (test) => {
         const result = stabilize(test.input);
+        const equalRows = result.length === test.output.length;
+        const equalCols = result[0].length === test.output[0].length;
 
-        const passed = result.length === test.output.length &&
-            result[0].length === test.output[0].length &&
-            result.every( (row, rowIndex) => {
+        // Test passed if every cell === expected value
+        const passed = equalRows && equalCols &&
+            result.every((row, rowIndex) => {
                 const expectedRow = test.output[rowIndex];
-
-                row.every( (value, colIndex) => {
-                    value === expectedRow[colIndex];
+                const rowsMatch = row.every( (value, colIndex) => {
+                    return value === expectedRow[colIndex];
                 });
+
+                return rowsMatch;
             });
 
         console.log(`Test passed? : ${passed}`);
