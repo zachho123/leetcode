@@ -78,9 +78,9 @@ function search(nums, target) {
         {
             input: {
                 nums: [1, 2],
-                target: 1
+                target: 2
             },
-            output: 0
+            output: 1
         },
         {
             input: {
