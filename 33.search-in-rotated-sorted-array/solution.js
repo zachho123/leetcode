@@ -8,48 +8,35 @@ function search(nums, target) {
     let end = nums.length;
     let half = Math.floor(nums.length / 2);
 
-    console.log('start half ' + half);
+    if (nums.length === 0) {
+        return -1;
+    }
 
     if (nums[half] === target) {
         return half;
-    // if target < half, answer should be in first half
-    } else if (target < nums[half]) {
-        // if target < start, answer might be rotated, check 2nd half
-        if (target < nums[start]) {
-            start = half + 1;
-            half = Math.floor((end - start) / 2) + start;
-        // check first half
-        } else {
+    } 
+    
+    // If target < half, but target > start -> possible rotated
+    // If target > half, but target > end -> possible rotated
+    // Check front half
+    if (target < nums[half] && target >= nums[start] ||
+        target > nums[half] && target > nums[end - 1]) {
             end = half;
-            half = Math.floor((end - start) / 2) + start;
-        }
-    // if target > half, answer should be in 2nd half
+    // Else check back half
     } else {
-        console.log('beeger');
-        // if target > end, answer might be rotated, check 1st half
-        if (target > nums[end]) {
-            end = half;
-            half = Math.floor((end - start) / 2) + start;
-        // check 2nd half
-        } else {
-            start = half + 1;
-            half = Math.floor((end - start) / 2) + start;
-        }
+        start = half + 1;
     }
+    half = Math.floor((end - start) / 2) + start;
 
     while (start !== end) {
-        console.log('start ' + start);
-        console.log('end ' + end);
-        console.log('half ' + half);
         if (nums[half] === target) {
             return half;
         } else if (target < nums[half]) {
             end = half;
-            half = Math.floor((end - start) / 2) + start;
         } else {
             start = half + 1;
-            half = Math.floor((end - start) / 2) + start;
         }
+        half = Math.floor((end - start) / 2) + start;
     }
 
     return -1;
@@ -84,6 +71,20 @@ function search(nums, target) {
                 target: 2
             },
             output: 0
+        },
+        {
+            input: {
+                nums: [1, 2],
+                target: 1
+            },
+            output: 0
+        },
+        {
+            input: {
+                nums: [7, 8, 1, 2, 3, 4, 5, 6],
+                target: 2
+            },
+            output: 3
         }
     ];
 
