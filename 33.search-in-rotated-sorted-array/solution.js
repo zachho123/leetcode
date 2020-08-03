@@ -1,42 +1,37 @@
 /**
  * Returns the index of the target.
- * @param {number[]} nums - Rotated sorted array to search.
+ * @param {number[]} nums - Potentially rotated sorted array to search.
  * @param {number} target - Value to search for.
  */
 function search(nums, target) {
-    let start = 0
-    let end = nums.length;
-    let half = Math.floor(nums.length / 2);
+    let start = 0;
+    let end = nums.length - 1;
 
     if (nums.length === 0) {
         return -1;
     }
 
-    if (nums[half] === target) {
-        return half;
-    } 
-    
-    // If target < half, but target > start -> possible rotated
-    // If target > half, but target > end -> possible rotated
-    // Check front half
-    if (target < nums[half] && target >= nums[start] ||
-        target > nums[half] && target > nums[end - 1]) {
-            end = half;
-    // Else check back half
-    } else {
-        start = half + 1;
-    }
-    half = Math.floor((end - start) / 2) + start;
+    while (start <= end) {
+        let mid = Math.floor((start + end) / 2);
 
-    while (start !== end) {
-        if (nums[half] === target) {
-            return half;
-        } else if (target < nums[half]) {
-            end = half;
-        } else {
-            start = half + 1;
+        if (nums[mid] === target) {
+            return mid;
         }
-        half = Math.floor((end - start) / 2) + start;
+
+        // If front half is sorted
+        if (nums[start] <= nums[mid]) {
+            if (target >= nums[start] && target < nums[mid]) {
+                end = mid - 1;
+            } else {
+                start = mid + 1;
+            }
+        } else {
+            if (target > nums[mid] && target <= nums[end]) {
+                start = mid + 1;
+            } else {
+                end = mid - 1;
+            }
+        }
     }
 
     return -1;
@@ -50,6 +45,13 @@ function search(nums, target) {
                 target: 0
             },
             output: 4
+        },
+        {
+            input: {
+                nums: [7, 8, 1, 2, 3, 4, 5, 6], // size 8
+                target: 2
+            },
+            output: 3
         },
         {
             input: {
@@ -81,10 +83,10 @@ function search(nums, target) {
         },
         {
             input: {
-                nums: [7, 8, 1, 2, 3, 4, 5, 6],
-                target: 2
+                nums: [3, 1],
+                target: 1
             },
-            output: 3
+            output: 1
         }
     ];
 
