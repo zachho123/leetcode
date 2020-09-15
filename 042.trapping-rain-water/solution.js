@@ -4,7 +4,34 @@
  * @return {number} - The number of water units trapped.
  */
 function trap(height) {
-  
+  let water = 0;
+  let left = 0;
+  let leftMax = 0;
+  let right = height.length - 1;
+  let rightMax = 0;
+
+  while (left < right) {
+    const leftHeight = height[left];
+    const rightHeight = height[right];
+
+    if (leftHeight < rightHeight) {
+      if (leftHeight > leftMax) {
+        leftMax = leftHeight;
+      } else {
+        water += leftMax - leftHeight;
+      }
+      left++;
+    } else {
+      if (rightHeight > rightMax) {
+        rightMax = rightHeight;
+      } else {
+        water += rightMax - rightHeight;
+      }
+      right--;
+    }
+  }
+
+  return water;
 }
 
 (function run() {
