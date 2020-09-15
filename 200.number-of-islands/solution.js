@@ -13,7 +13,8 @@ function numIslands(grid) {
         for (let col = 0; col < grid[0].length; col++) {
             if (grid[row][col] === '1') {
                 numIslands++;
-                clearIsland(grid, row, col);
+                // dfs(grid, row, col);
+                bfs(grid, row, col);
             }
         }
     }
@@ -21,17 +22,60 @@ function numIslands(grid) {
     return numIslands;
 }
 
-function clearIsland(grid, row, col) {
-    if (row >= 0 && row < grid.length &&
-        col >= 0 && col < grid[0].length) {
+function dfs(grid, row, col) {
+    // stack way
+    // let stack = [];
+    // stack.push([row, col]);
+
+    // while (stack.length > 0) {
+    //     const curr = stack.pop();
+
+    //     if (withinBounds(grid, curr[0], curr[1])) {
+    //         if (grid[curr[0]][curr[1]] === '1') {
+    //             grid[curr[0]][curr[1]] = '0';
+
+    //             stack.push([curr[0] - 1, curr[1]]);
+    //             stack.push([curr[0] + 1, curr[1]]);
+    //             stack.push([curr[0], curr[1] - 1]);
+    //             stack.push([curr[0], curr[1] + 1]);
+    //         }
+    //     }
+    // }
+
+    // recursive way
+    if (withinBounds(grid, row, col)) {
         if (grid[row][col] === '1') {
             grid[row][col] = '0';
-            clearIsland(grid, row-1, col); // check up
-            clearIsland(grid, row, col-1); // check left
-            clearIsland(grid, row, col+1); // check right
-            clearIsland(grid, row+1, col); // check down
+            dfs(grid, row - 1, col); // check up
+            dfs(grid, row, col - 1); // check left
+            dfs(grid, row, col + 1); // check right
+            dfs(grid, row + 1, col); // check down
         }
     }
+}
+
+function bfs(grid, row, col) {
+    let queue = [];
+    queue.push([row, col]);
+
+    while (queue.length > 0) {
+        const curr = queue.shift();
+
+        if (withinBounds(grid, curr[0], curr[1])) {
+            if (grid[curr[0]][curr[1]] === '1') {
+                grid[curr[0]][curr[1]] = '0';
+
+                queue.push([curr[0] - 1, curr[1]]); // up
+                queue.push([curr[0] + 1, curr[1]]); // down
+                queue.push([curr[0], curr[1] - 1]); // left
+                queue.push([curr[0], curr[1] + 1]); // right
+            }
+        }
+    }
+}
+
+function withinBounds(grid, row, col) {
+    return row >= 0 && row < grid.length && col >= 0 && col < grid[0].length;
 }
 
 (function runTests() {
@@ -56,7 +100,7 @@ function clearIsland(grid, row, col) {
         }
     ];
 
-    tests.forEach( (test) => {
+    tests.forEach((test) => {
         let result = numIslands(test.grid);
         let testPassed = result === test.expected ? 'Passed' : 'Failed';
 
