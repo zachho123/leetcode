@@ -4,7 +4,49 @@
  * @return {number} - The number of water units trapped.
  */
 function trap(height) {
-  
+  let water = 0;
+  let left = 0;
+  let leftMax = 0;
+  let right = height.length - 1;
+  let rightMax = 0;
+
+  while (left < right) {
+    const leftHeight = height[left];
+    const rightHeight = height[right];
+
+    /* 
+    We know a "bucket" will be formed when there is a left wall, a right
+    wall, and the current point we're looking at is less than
+    min(leftWall, rightWall). To search for these "buckets", we work from the
+    outside in. We use two pointers which we swap between (left, right), to
+    keep track of the current index we're looking at. We also keep track of
+    the maxLeft seen, and maxRight seen (representing the walls). When we have
+    found a "bucket" scenario, we know that the current columns water
+    contribution will be limited by min(leftWall, rightWall) because water
+    cannot be trapped if it overflows over the wall. The contribution will be
+    the max possible it could fill (up to min(leftWall, rightWall)), minus the
+    "filled" portion (current height) of the current position.
+    */
+
+    // The water area depends on min(leftHeight, rightHeight).
+    if (leftHeight < rightHeight) {
+      if (leftHeight > leftMax) {
+        leftMax = leftHeight;
+      } else {
+        water += leftMax - leftHeight;
+      }
+      left++;
+    } else {
+      if (rightHeight > rightMax) {
+        rightMax = rightHeight;
+      } else {
+        water += rightMax - rightHeight;
+      }
+      right--;
+    }
+  }
+
+  return water;
 }
 
 (function run() {
