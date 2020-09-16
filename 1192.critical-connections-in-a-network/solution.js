@@ -6,48 +6,23 @@
  * @return {number[][]} - List of critical connections.
  */
 function criticalConnections(n, connections) {
-  let graph = [];
+  // Create map of connections
+  let map = new Map();
   for (let i = 0; i < n; i++) {
-    graph.push([]);
+    map.set(i, []);
+  }
+  for (let i = 0; i < connections.length; i++) {
+    const v1 = connections[i][0];
+    const v2 = connections[i][1];
+    map.get(v1).push(v2);
+    map.get(v2).push(v1);
   }
 
-  for (let i = 0; i < n; i++) {
-    const con = connections[i];
-    graph[con[0]].push(con[1]);
-    graph[con[1]].push(con[0]);
-  }
-
-  console.log(graph);
-
-  let timer = [0];
-  let results = [];
-  let visited = new Array(n);
-  let timeStamp = new Array(n);
-
-  dfs(graph, -1, 0, timer, visited, results, timeStamp);
-
-  return results;
+  
 }
 
-function dfs(graph, parent, node, timer, visited, results, timeStamp) {
-  console.log('looking at node ' + node);
-  visited[node] = true;
-  timeStamp[node] = timer[0]++;
-  let curr = timeStamp[node];
-
-  for (let i = 0; i < graph[node].length; i++) {
-    const neighbor = graph[node][i];
-  // for (const neighbor of graph[node]) {
-    if (neighbor === parent) { continue; }
-    if (!visited[neighbor]) {
-      dfs(graph, node, neighbor, timer, visited, results, timeStamp);
-    }
-    timeStamp[node] = Math.min(timeStamp[node], timeStamp[neighbor]);
-    if (curr < timeStamp[neighbor]) {
-      console.log('found an answer');
-      results.push([node, neighbor]);
-    }
-  }
+function dfs() {
+  
 }
 
 (function run() {
