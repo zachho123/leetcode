@@ -1,9 +1,23 @@
 /**
- * Merges two sorted linked lists.
- * @param {ListNode} l1 - Sorted linked list.
- * @param {ListNode} l2 - Sorted linked list.
- * @return {ListNode} - Returns a new merged, sorted linked list.
+ * Merges k ascending-sorted linked lists into a single sorted list.
+ * @param {ListNode[]} lists - List of linked lists
+ * @return {ListNode} - Merged sorted linked list
  */
+function mergeKLists(lists) {
+  if (!lists || lists.length === 0) {
+    return null;
+  }
+
+  while (lists.length > 1) {
+    const l1 = lists.shift();
+    const l2 = lists.shift();
+    const merged = mergeTwoLists(l1, l2);
+    lists.push(merged);
+  }
+
+  return lists[0];
+}
+
 function mergeTwoLists(l1, l2) {
   let dummy = new ListNode(0);
   let curr = dummy;
@@ -32,6 +46,10 @@ function ListNode(val, next) {
 }
 
 function createLL(nums) {
+  if (!nums) {
+    return null;
+  }
+
   let head = null;
   let last = null;
 
@@ -46,15 +64,34 @@ function createLL(nums) {
 (function run() {
   let tests = [
     {
-      l1: createLL([1, 2, 4]),
-      l2: createLL([1, 3, 4]),
-      output: createLL([1, 1, 2, 3, 4, 4])
+      input: [
+        createLL([1, 4, 5]),
+        createLL([1, 3, 4]),
+        createLL([2, 6])
+      ],
+      output: createLL([1, 1, 2, 3, 4, 4, 5, 6])
+    },
+    {
+      input: [],
+      output: createLL(null)
+    },
+    {
+      input: [createLL(null)],
+      output: createLL(null)
+    },
+    {
+      input: [createLL(null), createLL([1])],
+      output: createLL([1])
+    },
+    {
+      input: [createLL([1, 2, 3]), createLL([4, 5, 6, 7])],
+      output: createLL([1, 2, 3, 4, 5, 6, 7])
     }
   ];
 
   tests.forEach(test => {
     console.log('\nrunning test...');
-    let result = mergeTwoLists(test.l1, test.l2);
+    let result = mergeKLists(test.input);
     let expected = test.output;
     let passed = true;
 
