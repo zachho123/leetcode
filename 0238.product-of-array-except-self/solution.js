@@ -52,6 +52,3 @@ function productExceptSelf(nums) {
     console.log(`test passed : ${passed}`);
   });
 })();
-
-// problems to try after
-// 238, 273, 121, 973, 56, 692, 139
