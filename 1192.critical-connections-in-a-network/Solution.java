@@ -4,46 +4,66 @@ public class Solution {
     public List<List<Integer>> criticalConnections(int n, 
             List<List<Integer>> connections) {
         List<List<Integer>> critical = new ArrayList<>();
-        Map<Integer, List<Integer>> edges = mapConnections(connections);
-        boolean[] visited = new boolean[n];
+        Map<Integer, List<Integer>> edges = mapConnections(n, connections);
+        // Keeps track if / when a node was visited, -1 = not visited
+        int[] timeVisited = new int[n];
+        Arrays.fill(timeVisited, -1);
+        int[] timer = {0};
 
-        dfs();
+        dfs(-1, 0, timeVisited, timer, edges, critical);
         
         return critical;
     }
     
-    private Map<Integer, List<Integer>> mapConnections(
+    private Map<Integer, List<Integer>> mapConnections(int n,
             List<List<Integer>> connections) {
         Map<Integer, List<Integer>> edges = new HashMap<>();
 
-        // for (int i = 0; i < connections.size(); i++) {
+        for (int i = 0; i < n; i++) {
+            edges.put(i, new ArrayList<Integer>());
+        }
+
         for (List<Integer> edge : connections) {
-            // List<Integer> edge = connections.get(i);
             int start = edge.get(0);
             int end = edge.get(1);
 
-            if (edges.containsKey(start)) {
-                edges.get(start).add(end);
-            } else {
-                ArrayList<Integer> conns = new ArrayList<>();
-                conns.add(end);
-                edges.put(start, conns);
-            }
-
-            if (edges.containsKey(end)) {
-                edges.get(end).add(start);
-            } else {
-                ArrayList<Integer> conns = new ArrayList<>();
-                conns.add(start);
-                edges.put(end, conns);
-            }
+            edges.get(start).add(end);
+            edges.get(end).add(start);
         }
 
         return edges;
     }
 
-    private void dfs() {
+    private void dfs(int parent, int node, int[] visited, int[] timer,
+            Map<Integer, List<Integer>> edges, 
+            List<List<Integer>> critical) {
+        // Mark current node as visited by giving it a time visited
+        visited[node] = timer[0]++;
+        int originalTimeVisted = visited[node];
 
+        // Check every non-parent neighbor
+        for (int neighbor : edges.get(node)) {
+            if (neighbor == parent) {
+                continue;
+            }
+
+            // Perform dfs if unvisited
+            if (visited[neighbor] == -1) {
+                dfs(node, neighbor, visited, timer, edges, critical);
+            }
+
+            // We take the min time seen to identify cycles, lower visited times
+            // will propagate around for cycles.
+            visited[node] = Math.min(visited[node], visited[neighbor]);
+
+            // This indicates no cycle, therefore a critical node
+            if (originalTimeVisted < visited[neighbor]) {
+                List<Integer> newCritical = new ArrayList<>();
+                newCritical.add(node);
+                newCritical.add(neighbor);
+                critical.add(newCritical);
+            }
+        }
     }
 
     public static void main(String[] args) {

@@ -71,7 +71,6 @@ function dfs(parent, node, edges, visited, visitedCounter, critical) {
     }
 
     // Update current node with least
-    console.log(`set visited[${node}] to ${Math.min(visited[node], visited[neighbor])}`);
     visited[node] = Math.min(visited[node], visited[neighbor]);
 
     if (timeVisited < visited[neighbor]) {
