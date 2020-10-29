@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class Solution {
     /**
      * Determine if a 9x9 sudoku board is valid. Only the filled cells need to
@@ -9,9 +11,53 @@ public class Solution {
      * @return
      */
     public boolean isValidSudoku(char[][] board) {
-        boolean isValid = true;
+        List<Set<Character>> rows = new ArrayList<>();
+        List<Set<Character>> cols = new ArrayList<>();
+        List<Set<Character>> quadrants = new ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            Set<Character> rowSet = new HashSet<>();
+            Set<Character> colSet = new HashSet<>();
+            Set<Character> quadSet = new HashSet<>();
+            rows.add(rowSet);
+            cols.add(colSet);
+            quadrants.add(quadSet);
+        }
 
-        return isValid;
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[0].length; col++) {
+                char currChar = board[row][col];
+                if (currChar != '.') {
+                    int quadrant = getQuadrant(row, col);
+                    Set<Character> rowSet = rows.get(row);
+                    Set<Character> colSet = cols.get(col);
+                    Set<Character> quadSet = quadrants.get(quadrant);
+
+                    if (isRepeatPresent(rowSet, colSet, quadSet, currChar)) {
+                        return false;
+                    } else {
+                        rowSet.add(currChar);
+                        colSet.add(currChar);
+                        quadSet.add(currChar);
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private int getQuadrant(int row, int col) {
+        return (row / 3) * 3 + col / 3;
+    }
+
+    private boolean isRepeatPresent(Set<Character> rowSet,
+            Set<Character> colSet, Set<Character> quadSet, char currChar) {
+        if (rowSet.contains(currChar) || colSet.contains(currChar) || 
+                quadSet.contains(currChar)) {
+            return true;
+        }
+
+        return false;
     }
 
     public static void main(String[] args) {
